@@ -1,23 +1,56 @@
-#include "soundex.h"
-#include <ctype.h> 
-#include <string.h> // Helper function to get Soundex code for a character 
-static char getSoundexCode(char c) 
-{ static const char Map[26] = { 
-'0', '1', '2', '3', '0', '1', '2', '0', '0', '2', '2', '4', '5', '5', '0', '1', '2', '6', '2', '3', '0', '0', '0', '2', '0', '2' }; 
-return isalpha(c) ? Map[toupper(c) - 'A'] : '0';
- } // Function to generate Soundex code for a given name 
-void generateSoundex(const char *name, char *soundex)
+#ifndef SOUNDEX_H
+#define SOUNDEX_H
+#include <ctype.h>
+#include <string.h>
+char getSoundexCode(char c) 
+{
+    static const char codeMap[26] = 
+    {
+        '0', '1', '2', '3', '0', '1', '2', '0', '0', '2', '2', '4', '5', '5', '0', '1', '2', '6', '2', '3', '0', '0', '0', '2', '0', '2'
+    };
+    if (isalpha(c)) 
+    {
+        return codeMap[toupper(c) - 'A'];
+    }
+    return '0';
+} 
+void CheckAndAddChar(char *soundex, int *sIndex, char code, char *prevCode) 
 { 
+    if (code != '0' && code != *prevCode) 
+    {
+        soundex[(*sIndex)++] = code;
+        *prevCode = code;
+    }
+}
+void processRemainingChars(const char *name, char *soundex, int *sIndex) 
+{
+    char prevCode = getSoundexCode(soundex[0]);
+    for (int i = 1; name[i] != '\0' && *sIndex < 4; i++) 
+    {
+        char code = getSoundexCode(name[i]);
+        CheckAndAddChar(soundex, sIndex, code, &prevCode);
+    }
+} 
+void padWithZeros(char *soundex, int startIndex) 
+{
+    while (startIndex < 4) 
+    {
+        soundex[startIndex++] = '0';
+    }
+    soundex[4] = '\0';
+}
+void generateSoundex(const char *name, char *soundex)
+{
     if (name[0] == '\0') 
-    { 
-        strcpy(soundex, "0000"); return; 
-    } 
-soundex[0] = toupper(name[0]);
-int index = 1; // Start after the initial character 
-for (int i = 1; name[i] != '\0' && index < 4; i++) 
-{ char code = getSoundexCode(name[i]);
- if (code != '0' && code != soundex[index - 1]) 
-{ soundex[index++] = code; } } 
-while (index < 4) { soundex[index++] = '0'; } 
-soundex[4] = '\0'; // Null terminate the string
- } 
+    {
+        strcpy(soundex, "0000");
+        return;
+    }
+    soundex[0] = toupper(name[0]);
+    int sIndex = 1;
+
+    processRemainingChars(name, soundex, &sIndex);
+    padWithZeros(soundex, sIndex);    
+}
+ 
+#endif // SOUNDEX_H
