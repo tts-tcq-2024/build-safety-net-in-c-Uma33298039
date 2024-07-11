@@ -17,7 +17,7 @@ char getSoundexCode(char c)
     return '0';
 }
  
-void CheckAndAddChar(char *soundex, int *sIndex, char code, char *prevCode) 
+void CheckAndAddCharacter(char *soundex, int *sIndex, char code, char *prevCode) 
 { 
     if (code != '0' && code != *prevCode) 
     {
@@ -26,18 +26,18 @@ void CheckAndAddChar(char *soundex, int *sIndex, char code, char *prevCode)
     }
 }
  
-void processRemainingChars(const char *name, char *soundex, int *sIndex) 
+void RemainingChars(const char *name, char *soundex, int *sIndex) 
 {
     char prevCode = getSoundexCode(soundex[0]);
     for (int i = 1; name[i] != '\0' && *sIndex < 4; i++) 
     {
         char code = getSoundexCode(name[i]);
-        CheckAndAddChar(soundex, sIndex, code, &prevCode);
+        CheckAndAddCharacter(soundex, sIndex, code, &prevCode);
     }
 }
  
  
-void padWithZeros(char *soundex, int startIndex) 
+void paddingWithZeros(char *soundex, int startIndex) 
 {
     while (startIndex < 4) 
     {
@@ -57,8 +57,8 @@ void generateSoundex(const char *name, char *soundex)
     int sIndex = 1;
 
  
-    processRemainingChars(name, soundex, &sIndex);
-    padWithZeros(soundex, sIndex);    
+    RemainingChars(name, soundex, &sIndex);
+    paddingWithZeros(soundex, sIndex);    
 }
  
 #endif // SOUNDEX_H
