@@ -9,8 +9,8 @@ TEST(SoundexTestsuite, ConstantsReplacedByDigits) {
  
 TEST(SoundexTestsuite, NonAlphabeticCharactersIgnored) {
     char soundex[5];
-    generateSoundex("C1X", soundex);
-    ASSERT_STREQ(soundex, "C200");
+    generateSoundex("A1X", soundex);
+    ASSERT_STREQ(soundex, "A200");
 }
 
 TEST(SoundexTestsuite, HandlesEmptyString) {
